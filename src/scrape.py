@@ -150,17 +150,15 @@ class PlayerStatistics:
 def main():
     sc1 = Scraper()
     pc1 = PlayerStatistics()
-    base_url = ["https://sports.yahoo.com/nfl/stats/weekly/?sortStatId=PASSING_YARDS&selectedTable=","&week={%22week%22:19,%22seasonPhase%22:%22POSTSEASON%22}"]
-    pc1.get_all_tables(sc1,base_url)
+    # base_url = ["https://sports.yahoo.com/nfl/stats/weekly/?sortStatId=PASSING_YARDS&selectedTable=","&week={%22week%22:19,%22seasonPhase%22:%22POSTSEASON%22}"]
+    # pc1.get_all_tables(sc1,base_url)
+    # pc1.save_tables_to_pickle('pc1_tables_dict.pickle')
 
+    pc1.tables = pc1.load_in_tables_from_pickle('pc1_tables_dict.pickle')
+    
     print(pc1.tables['Passing'])
     print(pc1.tables['Receiving'])
     print(pc1.tables['Defense'])
-
-    # pc1.save_tables_to_pickle('pc1_tables_dict.pickle')
-
-    # pc1.tables = pc1.load_in_tables_from_pickle('pc1_tables_dict.pickle')
-    
 
 
 if __name__ == "__main__":
