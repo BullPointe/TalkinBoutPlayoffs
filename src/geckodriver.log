@@ -1,0 +1,12 @@
+1642835940444	geckodriver	INFO	Listening on 127.0.0.1:51377
+1642835941172	mozrunner::runner	INFO	Running command: "/Applications/Firefox.app/Contents/MacOS/firefox-bin" "--marionette" "-foreground" "-no-remote" "-profile" "/var/folders/03/6jbg230d1g1df5j9vfz3mvpm0000gn/T/rust_mozprofiletYvJxm"
+1642835948069	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /var/folders/03/6jbg230d1g1df5j9vfz3mvpm0000gn/T/rust_mozprofiletYvJxm/search.json.mozlz4", (void 0)))
+console.error: BackgroundUpdate: 
+  _reasonsToNotScheduleUpdates: Failed to check for Maintenance Service Registry Key: [Exception... "Component returned failure code: 0x80004001 (NS_ERROR_NOT_IMPLEMENTED) [nsIUpdateProcessor.getServiceRegKeyExists]"  nsresult: "0x80004001 (NS_ERROR_NOT_IMPLEMENTED)"  location: "JS frame :: resource://gre/modules/BackgroundUpdate.jsm :: _reasonsToNotScheduleUpdates :: line 243"  data: no]
+1642835951617	Marionette	INFO	Listening on port 51389
+1642836120433	Marionette	INFO	Stopped listening on port 51389
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
