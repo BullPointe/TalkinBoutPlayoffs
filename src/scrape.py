@@ -1,8 +1,8 @@
-from multiprocessing.sharedctypes import Value
-from wsgiref import headers
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options  
 import pandas as pd
+from selenium.common.exceptions import NoSuchElementException        
 import re
 import urllib.request
 import requests
@@ -28,13 +28,18 @@ class Scraper:
     def get_status(self) -> int:
         return self.status
     def parse_url(self) -> None:
-        # driver = webdriver.Chrome()
-        # driver.get(self.scrape_url)
+        fireFoxOptions = webdriver.FirefoxOptions()
+        fireFoxOptions.set_headless()
+        self.driver = webdriver.Firefox(firefox_options=fireFoxOptions)
+
         # html = driver.page_source
-        self.source = urllib.request.urlopen(self.scrape_url)
-        r = requests.get(self.scrape_url)
-        print(r.text)
-        self.soup = BeautifulSoup(self)
+        # self.source = urllib.request.urlopen(self.scrape_url)
+        # r = requests.get(self.scrape_url)
+        # print(r.text)
+        self.driver.get(self.scrape_url)
+        self.soup = BeautifulSoup(self.driver.page_source,"html.parser")
+        
+        # print(self.soup)a
         # print(self.soup)
     def parse_html(self) -> None:
         self.rows=list()
@@ -50,7 +55,7 @@ class Scraper:
                 self.rows.append(row)
 
         self.status = 1
-    def parse_stats(self, data):
+    def parse_stats(self, data, append=False):
         headers_list = list()
         stats_list = list()
         for col in self.header.findAll("th"):
@@ -71,8 +76,11 @@ class Scraper:
         
         # fill dataframe
         df_stats = pd.DataFrame(stats_list, columns=headers_list)
-        data.add_table(self.name,df_stats)
 
+        if append == False:
+            data.add_table(self.name,df_stats)
+        else:
+            data.tables[self.name] = pd.concat([data.tables[self.name], df_stats], ignore_index=True)
 
     def get_html_table_attr(self):
         if self.status > 0:
@@ -97,8 +105,34 @@ class Player_Statistics:
             url = base_url[0] + str(i) + base_url[1]
             scraper.set_url(url, name)
             scraper.parse_url()
-            # scraper.parse_html()
-            # scraper.parse_stats(self)
+            # weeklyStatsFootballReceiving
+            scraper.parse_html()
+            scraper.parse_stats(self,append=False)
+            
+            isMore = True
+            try:
+                # elements = scraper.driver.find_elements_by_class_name("D(ib) Mstart(8px)")
+                elements = scraper.driver.find_elements_by_xpath("//li[@class='D(ib) Mstart(8px)']")
+            except NoSuchElementException:
+                print("Not Found")
+                isMore = False
+
+
+
+            if isMore:
+                print("More")
+                for idx,element in enumerate(elements):
+                    if(idx >0):
+                        elements = scraper.driver.find_elements_by_xpath("//li[@class='D(ib) Mstart(8px)']")
+                        elements[idx].click()
+                        scraper.soup = BeautifulSoup(scraper.driver.page_source,"html.parser")
+                        scraper.parse_html()
+                        scraper.parse_stats(self,append=True)
+                        scraper.driver.refresh()
+
+
+
+            scraper.driver.close()
             
 
 
@@ -108,6 +142,10 @@ def main():
     base_url = ["https://sports.yahoo.com/nfl/stats/weekly/?sortStatId=PASSING_YARDS&selectedTable=","&week={%22week%22:19,%22seasonPhase%22:%22POSTSEASON%22}"]
     pc1.get_all_tables(sc1,base_url)
 
+    sc1.driver.quit()
+
+    print(pc1.tables['Passing'])
+    print(pc1.tables['Receiving'])
     print(pc1.tables['Defense'])
 
 
