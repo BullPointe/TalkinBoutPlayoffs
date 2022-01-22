@@ -3,10 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options  
 import pandas as pd
 from selenium.common.exceptions import NoSuchElementException        
-import re
-import urllib.request
-import requests
-
+import pickle
 
 def is_num_or_float(value):
     try:
@@ -27,11 +24,13 @@ class Scraper:
         return self.scrape_url
     def get_status(self) -> int:
         return self.status
-    def parse_url(self) -> None:
+    def create_driver(self):
         fireFoxOptions = webdriver.FirefoxOptions()
         fireFoxOptions.set_headless()
         self.driver = webdriver.Firefox(firefox_options=fireFoxOptions)
-
+    def close_driver(self):
+        self.driver.quit()
+    def parse_url(self) -> None:
         # html = driver.page_source
         # self.source = urllib.request.urlopen(self.scrape_url)
         # r = requests.get(self.scrape_url)
@@ -54,8 +53,8 @@ class Scraper:
             else:
                 self.rows.append(row)
 
-        self.status = 1
-    def parse_stats(self, data, append=False):
+        self.status += 1
+    def parse_stats(self, data: 'PlayerStatistics', append=False):
         headers_list = list()
         stats_list = list()
         for col in self.header.findAll("th"):
@@ -82,6 +81,29 @@ class Scraper:
         else:
             data.tables[self.name] = pd.concat([data.tables[self.name], df_stats], ignore_index=True)
 
+    def parse_all_stats(self,data):
+        self.parse_stats(data,append=False)
+            
+        isMore = True
+        try:
+            # elements = scraper.driver.find_elements_by_class_name("D(ib) Mstart(8px)")
+            elements = self.driver.find_elements_by_xpath("//li[@class='D(ib) Mstart(8px)']")
+        except NoSuchElementException:
+            print("Not Found")
+            isMore = False
+
+        if isMore:
+            print("More")
+            for idx in range(len(elements)):
+                if(idx >0):
+                    elements = self.driver.find_elements_by_xpath("//li[@class='D(ib) Mstart(8px)']")
+                    elements[idx].click()
+                    self.soup = BeautifulSoup(self.driver.page_source,"html.parser")
+                    self.parse_html()
+                    self.parse_stats(data,append=True)
+                    self.driver.refresh()
+
+
     def get_html_table_attr(self):
         if self.status > 0:
             print("Rows:",len(self.rows))
@@ -91,7 +113,7 @@ class Scraper:
     
 
 
-class Player_Statistics:
+class PlayerStatistics:
 
     def __init__(self) -> None:
         self.tables = {}
@@ -100,54 +122,45 @@ class Player_Statistics:
     def add_table(self,name,df):
         self.tables[name] = df
     
-    def get_all_tables(self,scraper,base_url):
+    def get_all_tables(self,scraper: Scraper,base_url):
+        scraper.create_driver()
         for i,name in enumerate(self.table_IDS):
             url = base_url[0] + str(i) + base_url[1]
             scraper.set_url(url, name)
             scraper.parse_url()
-            # weeklyStatsFootballReceiving
             scraper.parse_html()
-            scraper.parse_stats(self,append=False)
-            
-            isMore = True
-            try:
-                # elements = scraper.driver.find_elements_by_class_name("D(ib) Mstart(8px)")
-                elements = scraper.driver.find_elements_by_xpath("//li[@class='D(ib) Mstart(8px)']")
-            except NoSuchElementException:
-                print("Not Found")
-                isMore = False
+            scraper.parse_all_stats(self)
+        
+        scraper.close_driver()
+    
+    def save_tables_to_pickle(self,loc: str):
+        pickle_out = open(loc, 'wb')
+        pickle.dump(self.tables, pickle_out)
+        pickle_out.close()
 
+    def load_in_tables_from_pickle(self,loc: str) -> dict:
+         # create new dictionary from pickle file
+        pickle_in = open(loc, 'rb')
+        new_dict = pickle.load(pickle_in)
 
+        return new_dict
 
-            if isMore:
-                print("More")
-                for idx,element in enumerate(elements):
-                    if(idx >0):
-                        elements = scraper.driver.find_elements_by_xpath("//li[@class='D(ib) Mstart(8px)']")
-                        elements[idx].click()
-                        scraper.soup = BeautifulSoup(scraper.driver.page_source,"html.parser")
-                        scraper.parse_html()
-                        scraper.parse_stats(self,append=True)
-                        scraper.driver.refresh()
-
-
-
-            scraper.driver.close()
-            
 
 
 def main():
     sc1 = Scraper()
-    pc1 = Player_Statistics()
+    pc1 = PlayerStatistics()
     base_url = ["https://sports.yahoo.com/nfl/stats/weekly/?sortStatId=PASSING_YARDS&selectedTable=","&week={%22week%22:19,%22seasonPhase%22:%22POSTSEASON%22}"]
     pc1.get_all_tables(sc1,base_url)
-
-    sc1.driver.quit()
 
     print(pc1.tables['Passing'])
     print(pc1.tables['Receiving'])
     print(pc1.tables['Defense'])
 
+    # pc1.save_tables_to_pickle('pc1_tables_dict.pickle')
+
+    # pc1.tables = pc1.load_in_tables_from_pickle('pc1_tables_dict.pickle')
+    
 
 
 if __name__ == "__main__":
