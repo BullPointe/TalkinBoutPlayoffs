@@ -7,10 +7,17 @@
   <body>
     {% extends "template.html" %}
     {% block content %}
-    
-    <h1> My First Try Using Flask </h1>
-    <p> Flask is Fun </p>
-    
+    <center>
+        <form method="post" action="/">
+            <input type="submit" value="League Leaderboard" name="action1" />
+            <div>
+                <p></p>
+            </div>
+            <input type="submit" value="Player Statistics" name="action2" />
+        </form>
+    </center>
+    <dvi><p></p></dvi>
+    <p>Welcome to our small corner of the internet where we embarked on quite the journey. In search of some sports statistics to fuel our platform's database, we encountered the paywalls put up by almost every major media site for use of their APIs. So as broke college students, we were left with the unfortunate option of constructing our own web crawler (compliant with robots.txt of course) to scrape through mounds of html and acquire the elusive data.</p>
     {% endblock %}
   </body>
 </html>

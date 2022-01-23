@@ -1,20 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
- <head style="padding-top:10px">
+ <head>
    <meta charset="utf-8">
    <title>Flask Parent Template</title>
    <link rel="stylesheet" href="{{ url_for('static',     filename='css/template.css') }}">
  </head>
  <body>
     <header>
-      <div class="container">
+      <div class="container" style="padding-top:10px">
         <h1 class="logo">Talkin' Bout Playoffs!</h1>
-        <strong><nav>
-          <ul class="menu">
-            <li><a href="{{ url_for('home') }}">Home</a></li>
-            <li><a href="{{ url_for('table') }}">Table</a></li>
-          </ul> 
-        </nav></strong>
+        <h2>Let's check out the league standings</h2>
       </div>
     </header>
     

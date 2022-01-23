@@ -24,7 +24,7 @@ h2 {
 
 
 p { 
-    color: #f6f6f6; 
+    color: #090909; 
     font-family: 'Orienta', sans-serif; 
     font-size: 16px; 
     line-height: 24px; 
@@ -39,3 +39,16 @@ a { color: #e8d4a7; text-decoration: none; text-align: right; padding: 15px; fon
 a:hover { color: #da9650; text-decoration: blink; }
 
 body {background-color: #CEC6C4;}
+
+input {
+    width: 100%;
+    padding: 40px;
+    border-radius: 25px;
+    font-size: x-large;
+    cursor: pointer;
+  }
+
+input:hover {
+    background-color: #da9650; 
+    text-decoration: blink;
+}
