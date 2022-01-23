@@ -7,7 +7,7 @@ class DatabaseConnection():
     
     def create_connection(self):
         # self.conn = create_engine('cockroachdb://root@127.0.0.1:26257/stats')
-        self.conn = sqlite3.connect('example.db')
+        self.conn = sqlite3.connect('../example.db')
         self.cur = self.conn.cursor()
         # self.conn.set_session(autocommit=True)
 

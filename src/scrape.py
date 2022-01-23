@@ -261,13 +261,13 @@ class PlayerStatistics:
 def main():
     sc1 = Scraper()
     pc1 = PlayerStatistics()
-    base_url = ["https://sports.yahoo.com/nfl/stats/weekly/?sortStatId=PASSING_YARDS&selectedTable=","&week={'week':",",'seasonPhase':'POSTSEASON'}"]
-    pc1.get_all_tables(sc1,base_url)
+    #base_url = ["https://sports.yahoo.com/nfl/stats/weekly/?sortStatId=PASSING_YARDS&selectedTable=","&week={'week':",",'seasonPhase':'POSTSEASON'}"]
+    #pc1.get_all_tables(sc1,base_url)
 
-    pc1.save_tables_to_pickle('pc1_tables_dict.pickle')
+    #pc1.save_tables_to_pickle('pc1_tables_dict.pickle')
 
     # #Optional Loading from File
-    # # pc1.tables = pc1.load_in_tables_from_pickle('pc1_tables_dict.pickle')
+    pc1.tables = pc1.load_in_tables_from_pickle('pc1_tables_dict.pickle')
     
     # #Load into SQLLite3
     db_connection = DatabaseConnection()
