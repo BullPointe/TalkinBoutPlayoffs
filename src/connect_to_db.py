@@ -1,4 +1,4 @@
-import psycopg2
+import sqlite3
 
 class DatabaseConnection():
 
@@ -6,17 +6,16 @@ class DatabaseConnection():
         self.status = 0
     
     def create_connection(self):
-        self.conn = psycopg2.connect(
-            database='statistics',
-            user='playoffsUser',
-            host='localhost',
-            port=26257
-        )
-        self.conn.set_session(autocommit=True)
+        # self.conn = create_engine('cockroachdb://root@127.0.0.1:26257/stats')
+        self.conn = sqlite3.connect('example.db')
+        self.cur = self.conn.cursor()
+        # self.conn.set_session(autocommit=True)
+
+    def close_connection(self):
+        self.conn.close()
 
     def execute_statement(self,statement: str):
         print(self.conn)
-        self.cur = self.conn.cursor()
         exe = self.cur.execute(statement)
         self.result = self.cur.fetchall()
         

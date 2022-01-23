@@ -5,6 +5,7 @@ import pandas as pd
 from selenium.common.exceptions import NoSuchElementException        
 import pickle
 from connect_to_db import DatabaseConnection
+# from cleaning_pickle import update_tables
 
 
 def is_num_or_float(value):
@@ -85,6 +86,7 @@ class Scraper:
             data.add_table(self.name,df_stats)
         else:
             data.tables[self.name] = pd.concat([data.tables[self.name], df_stats], ignore_index=True)
+        
 
     def parse_all_stats(self,data):
         self.parse_stats(data,append=False)
@@ -137,7 +139,21 @@ class PlayerStatistics:
             scraper.parse_all_stats(self)
         
         scraper.close_driver()
+
+        self.update_tables()
     
+    def update_tables(self):
+        # starts by loading pickle from scrape.py
+        # pc1.tables = pc1.load_in_tables_from_pickle('pc1_tables_dict.pickle')
+        defense_players = self.tables['Defense']
+        passing_players = self.tables['Passing']
+        rushing_players = self.tables['Rushing']
+        #print(df['Fumbles returned for a touchdown'])
+        # need to add support for fumbes returned for touchdown
+        self.tables['TeamDefense'] = defense_players.groupby(defense_players['Team']).agg({'Sacks':'sum','Interceptions':'sum','Interception Return Touchdowns':'sum','Forced Fumbles':'sum','Safeties':'sum','Fumbles returned for a touchdown':'sum'})
+        self.tables['TeamOffense'] = pd.merge(passing_players.groupby(passing_players['Team']).agg({'Passing Yards':'sum'}), rushing_players.groupby(rushing_players['Team']).agg({'Rushing Yards':'sum'}), on='Team')
+        # print(self.tables['TeamOffense'])
+
     def save_tables_to_pickle(self,loc: str):
         pickle_out = open(loc, 'wb')
         pickle.dump(self.tables, pickle_out)
@@ -150,6 +166,12 @@ class PlayerStatistics:
 
         return new_dict
 
+    def load_tables_to_sql(self,db_connection :DatabaseConnection):
+        for name in self.tables:
+            df = self.tables[name]
+            # db_connection.execute_statement("COPY sample_table_name FROM ./temp.csv DELIMITER ',' CSV_HEADER")
+            df = df.loc[:,~df.columns.duplicated()]
+            df.to_sql(name, db_connection.conn, if_exists='replace', index = False)
 
 
 def main():
@@ -159,23 +181,20 @@ def main():
     pc1.get_all_tables(sc1,base_url)
     pc1.save_tables_to_pickle('pc1_tables_dict.pickle')
 
-    pc1.tables = pc1.load_in_tables_from_pickle('pc1_tables_dict.pickle')
+    #Optional Loading from File
+    # pc1.tables = pc1.load_in_tables_from_pickle('pc1_tables_dict.pickle')
     
-    # print(pc1.tables['Passing'])
-    # print(pc1.tables['Receiving'])
-    # print(pc1.tables['Defense'])
-
-
     #Load into Cockroach DB
     db_connection = DatabaseConnection()
     db_connection.create_connection()
-    db_connection.execute_statement('SELECT * FROM sample')
+    pc1.load_tables_to_sql(db_connection)
+
+    # db_connection.execute_statement('SHOW * FROM Team_Offense')
+    db_connection.execute_statement("SELECT name FROM sqlite_master WHERE type='table'")
 
     print(db_connection.result)
 
-
-
-
+    db_connection.close_connection()
 
 
 
