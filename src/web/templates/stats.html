@@ -1,3 +1,94 @@
-<html>
-    <div>Welcome here are stats...</div>
-</html>
+<link rel="stylesheet" href="{{ url_for('static',     filename='css/stats.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',     filename='css/template.css') }}">
+
+<center>
+<!-- <div class="chart-wrap">
+    <h2 class="title">Leading Recievers </h2>
+    <div class="grid horizontal">
+    <div class="bar" style="--bar-value:75%;" data-name="A.J Brown (142 yds)" title="Your Blog 85%"></div>
+          <div class="bar" style="--bar-value:60%;" data-name="Mike Evans (129 yds)" title="Medium 23%"></div>
+         <div class="bar" style="--bar-value:50%;" data-name="Ja'Marr Chase (109 yds)" title="Tumblr 7%"></div>
+          <div class="bar" style="--bar-value:38%;" data-name="George Kittle (63 yds)" title="Facebook 38%"></div>
+          <div class="bar" style="--bar-value:35%;" data-name="Tyler Boyd (61 yds)" title="YouTube 35%"></div>
+    </div>
+</div> -->
+
+<table class="graph">
+	<h1>Leading Recievers</h1>
+	<thead>
+		<tr>
+			<th scope="col">Item</th>
+			<th scope="col">Percent</th>
+		</tr>
+	</thead><tbody>
+		<tr style="height:85%">
+			<th scope="row">A.J Brown</th>
+			<td><span>142 yds</span></td>
+		</tr>
+		<tr style="height:70%">
+			<th scope="row">Mike Evans</th>
+			<td><span>129 yds</span></td>
+		</tr>
+		<tr style="height:60%">
+			<th scope="row">Ja'Marr Chase</th>
+			<td><span>109 yds</span></td>
+		</tr>
+        <tr style="height:45%">
+			<th scope="row" style="font-weight: bold;">Playoff Average</th>
+			<td><span>70 yds</span></td>
+		</tr>
+		<tr style="height:36%">
+			<th scope="row">George Kittle</th>
+			<td><span>63 yds</span></td>
+		</tr>
+        <tr style="height:32%">
+			<th scope="row">Joe Mixon</th>
+			<td><span>51 yds</span></td>
+		</tr>
+		<tr style="height:31%">
+			<th scope="row">Tyler Boyd</th>
+			<td><span>50 yds</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<table class="graph">
+	<h1 style="margin-top: 30px;">Leading Rushers</h1>
+	<thead>
+		<tr>
+			<th scope="col">Item</th>
+			<th scope="col">Percent</th>
+		</tr>
+	</thead><tbody>
+		<tr style="height:76%">
+			<th scope="row">Eli Mitchell</th>
+			<td><span>96 yds</span></td>
+		</tr>
+		<tr style="height:63%">
+			<th scope="row">Josh Jacobs</th>
+			<td><span>83 yds</span></td>
+		</tr>
+		<tr style="height:60%">
+			<th scope="row">Devin Singletery</th>
+			<td><span>81 yds</span></td>
+		</tr> 
+		<tr style="height:56%">
+			<th scope="row">Deebo Samuel</th>
+			<td><span>72 yds</span></td>
+		</tr>
+        <tr style="height:52%">
+			<th scope="row">Josh Allen</th>
+			<td><span>66 yds</span></td>
+		</tr>
+        <tr style="height:40%">
+			<th scope="row" style="font-weight: bold;">Playoff Average</th>
+			<td><span>40 yds</span></td>
+		</tr>
+		<tr style="height:39%">
+			<th scope="row">Jalen Hurts</th>
+			<td><span>39 yds</span></td>
+		</tr>
+	</tbody>
+</table>
+
+</center>
