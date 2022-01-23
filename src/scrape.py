@@ -4,6 +4,8 @@ from selenium.webdriver.chrome.options import Options
 import pandas as pd
 from selenium.common.exceptions import NoSuchElementException        
 import pickle
+from connect_to_db import DatabaseConnection
+
 
 def is_num_or_float(value):
     try:
@@ -68,7 +70,10 @@ class Scraper:
                 if is_num_or_float(col.text):
                     ind_stats.append(float(col.text))
                 else:
-                    ind_stats.append(col.text)
+                    if(col.text == '-'):
+                        ind_stats.append(0.0)
+                    else:
+                        ind_stats.append(col.text)
 
             #Add row
             stats_list.append(ind_stats)
@@ -150,15 +155,28 @@ class PlayerStatistics:
 def main():
     sc1 = Scraper()
     pc1 = PlayerStatistics()
-    # base_url = ["https://sports.yahoo.com/nfl/stats/weekly/?sortStatId=PASSING_YARDS&selectedTable=","&week={%22week%22:19,%22seasonPhase%22:%22POSTSEASON%22}"]
-    # pc1.get_all_tables(sc1,base_url)
-    # pc1.save_tables_to_pickle('pc1_tables_dict.pickle')
+    base_url = ["https://sports.yahoo.com/nfl/stats/weekly/?sortStatId=PASSING_YARDS&selectedTable=","&week={%22week%22:19,%22seasonPhase%22:%22POSTSEASON%22}"]
+    pc1.get_all_tables(sc1,base_url)
+    pc1.save_tables_to_pickle('pc1_tables_dict.pickle')
 
     pc1.tables = pc1.load_in_tables_from_pickle('pc1_tables_dict.pickle')
     
-    print(pc1.tables['Passing'])
-    print(pc1.tables['Receiving'])
-    print(pc1.tables['Defense'])
+    # print(pc1.tables['Passing'])
+    # print(pc1.tables['Receiving'])
+    # print(pc1.tables['Defense'])
+
+
+    #Load into Cockroach DB
+    db_connection = DatabaseConnection()
+    db_connection.create_connection()
+    db_connection.execute_statement('SELECT * FROM sample')
+
+    print(db_connection.result)
+
+
+
+
+
 
 
 if __name__ == "__main__":
