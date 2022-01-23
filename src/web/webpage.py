@@ -33,7 +33,7 @@ def table():
     #db.execute_statement("INSERT INTO roster SELECT 'Eli Mitchell' AS player, 2 AS teamID UNION ALL SELECT 'Josh Jacobs', 2 UNION ALL SELECT 'TB', 3 UNION ALL SELECT 'Stefon Diggs', 3")
     #db.execute_statement("INSERT INTO roster SELECT 'Travis Kelce' AS player, 2 AS teamID UNION ALL SELECT 'CIN', 2 UNION ALL SELECT 'Rondale Moore', 3 UNION ALL SELECT 'Rob Gronkowski', 3")
     #db.execute_statement("SELECT * FROM roster")
-    print(db.result)
+    #print(db.result)
     db.close_connection()
     return render_template("table.html")
 
